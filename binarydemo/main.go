@@ -10,10 +10,10 @@ import (
 */
 
 func main() {
-	fmt.Println(tenToTwoBinaryString(99))
+	fmt.Println(tenToTwoBinaryStringForInt(-99))
 }
 
-func tenToTwoBinaryString(num int) string {
+func tenToTwoBinaryStringForUInt(num int) string {
 	result := ""
 	cur := num
 	for cur > 0 {
@@ -21,4 +21,19 @@ func tenToTwoBinaryString(num int) string {
 		cur = cur >> 1
 	}
 	return result
+}
+
+func tenToTwoBinaryStringForInt(num int) string {
+	if num < 0 {
+		var unum = -num
+		result := ""
+		cur := unum
+		cur = ((cur >> 1) << 1) | ((cur & 1) ^ 1)
+		for cur > 0 {
+			result = result + strconv.Itoa((((cur) & 1) ^ 1))
+			cur = cur >> 1
+		}
+		return result
+	}
+	return tenToTwoBinaryStringForUInt(num)
 }
