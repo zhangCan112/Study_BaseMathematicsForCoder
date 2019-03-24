@@ -9,19 +9,23 @@ var amount = flag.Int("amount", 0, "初始金额")
 
 var amountCategory = []int{1, 2, 5, 10}
 
+var results = make([][]int, 0)
+
 func main() {
 	flag.Parse()
-	fmt.Printf("您输入的金额：%d\n", *amount)
+	goWork(*amount, make([]int, 0))
+	fmt.Printf("您输入的金额方案有：%d种方式\n", len(results))
 }
 
-func goWork(amount int, result int) int {
-	count := result
+func goWork(amount int, process []int) {
 	if amount == 0 {
-		return count
+		fmt.Println(process)
+		results = append(results, process)
 	} else {
 		for _, value := range amountCategory {
-			if count >= value {
-
+			if amount >= value {
+				process := append(process, value)
+				goWork(amount-value, process)
 			}
 		}
 	}
