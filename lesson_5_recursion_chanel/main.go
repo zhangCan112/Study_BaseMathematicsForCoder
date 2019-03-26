@@ -8,11 +8,12 @@ import (
 )
 
 var amount = flag.Int("amount", 0, "初始金额")
-var procs = flag.Int("procs", 1, "最大线程数")
+var procs = flag.Int("procs", 8, "最大线程数")
 
 var amountCategory = []int{1, 2, 5, 10}
 
-var totalResults = make(chan [][]int, *procs)
+var resultChanel = make(chan []int, *procs)
+var refChangeChanel = make(chan int, *procs)
 
 func main() {
 	flag.Parse()
@@ -20,8 +21,25 @@ func main() {
 	start := time.Now()
 	go goWork(*amount, make([]int, 0), *amount)
 
-	for index := 0; index < count; index++ {
-
+	results := make([][]int, 0)
+	refCount := 1
+	for refCount > 0 {
+		select {
+		case process := <-resultChanel:
+			results = append(results, process)
+			fmt.Println(process)
+		case change := <-refChangeChanel:
+			{
+				refCount += change
+				if refCount == 1 {
+					refChangeChanel <- -1
+					close(refChangeChanel)
+					close(resultChanel)
+				}
+			}
+		default:
+			// fmt.Println("wait result!")
+		}
 	}
 
 	end := time.Now()
@@ -31,11 +49,13 @@ func main() {
 }
 
 func goWork(amount int, process []int, total int) {
+
+	refChangeChanel <- 1
+	time.Sleep(1e7)
 	if amount == 0 {
-		results = append(results, process)
-		fmt.Println(process)
+		resultChanel <- process
 	} else {
-		for _, value := range amountCategory {
+		for index, value := range amountCategory {
 			if amount >= value {
 				process := append(process, value)
 				if total == amount {
@@ -46,4 +66,5 @@ func goWork(amount int, process []int, total int) {
 			}
 		}
 	}
+	refChangeChanel <- -1
 }
