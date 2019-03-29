@@ -51,11 +51,10 @@ func main() {
 func goWork(amount int, process []int, total int) {
 
 	refChangeChanel <- 1
-	time.Sleep(1e7)
 	if amount == 0 {
 		resultChanel <- process
 	} else {
-		for index, value := range amountCategory {
+		for _, value := range amountCategory {
 			if amount >= value {
 				process := append(process, value)
 				if total == amount {
@@ -66,5 +65,6 @@ func goWork(amount int, process []int, total int) {
 			}
 		}
 	}
+	time.Sleep(1e7)
 	refChangeChanel <- -1
 }

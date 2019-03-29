@@ -1,4 +1,4 @@
-/**
+/*
 实现一个密码暴力破解Demo,不用递归实现,实现最大长度的破解.
 这里复习用到了位运算和进制的概念。M(字符集长度)的N(密码长度)次方种可能可以试为M进制长度为N的一个M进制数，则每一个这样的数代表了一种排列方式。
 每一个权重位上的数字代表了该顺序位上在字符集的index。通过替换就可以获取到其对应的密码。这样就用循环取代了递归，提高了代码的运行效率
@@ -27,6 +27,9 @@ func main() {
 	fmt.Println(result)
 }
 
+/*
+获取密码
+*/
 func getPassword(compare compareFunc, maxLength int) (string, bool) {
 	for length := 1; length <= maxLength; length++ {
 		kindsFloat := math.Pow(float64(len(pwSet)), float64(length))
