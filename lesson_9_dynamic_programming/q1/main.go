@@ -22,15 +22,15 @@ func main() {
 
 	//迭代法调用
 	s2 := time.Now().Unix()
-	// fmt.Println(iteration(10000111))
-	iteration(1000011111)
+	fmt.Println(iteration(100))
+	// iteration(100)
 	e2 := time.Now().Unix()
 	fmt.Println((e2 - s2))
 
 	//动态规划
 	s3 := time.Now().Unix()
-	// fmt.Println(optimalDynamicProgramming(10000111))
-	optimalDynamicProgramming(1000011111)
+	fmt.Println(optimalDynamicProgramming(100))
+	// optimalDynamicProgramming(100)
 	e3 := time.Now().Unix()
 	fmt.Println((e3 - s3))
 }
