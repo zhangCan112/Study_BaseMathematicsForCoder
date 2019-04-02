@@ -9,20 +9,20 @@ import (
 )
 
 type Stack struct {
-	container []*TreeNode
+	container []interface{}
 }
 
 func (stack *Stack) init() {
-	stack.container = make([]*TreeNode, 0)
+	stack.container = make([]interface{}, 0)
 }
 
-func (stack *Stack) push(node *TreeNode) {
-	temp := make([]*TreeNode, 0)
+func (stack *Stack) push(node interface{}) {
+	temp := make([]interface{}, 0)
 	temp = append(temp, node)
 	stack.container = append(temp, stack.container...)
 }
 
-func (stack *Stack) pop() *TreeNode {
+func (stack *Stack) pop() interface{} {
 	if len(stack.container) == 0 {
 		return nil
 	}
@@ -137,7 +137,7 @@ func ergodic() {
 	stack.init()
 	stack.push(root)
 	for {
-		node := stack.pop()
+		node := *Stack(stack.pop())
 		if node == nil {
 			break
 		}
