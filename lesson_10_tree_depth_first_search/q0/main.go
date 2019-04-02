@@ -3,7 +3,33 @@
 */
 package main
 
-import "fmt"
+import (
+	"flag"
+	"fmt"
+)
+
+type Stack struct {
+	container []*TreeNode
+}
+
+func (stack *Stack) init() {
+	stack.container = make([]*TreeNode, 0)
+}
+
+func (stack *Stack) push(node *TreeNode) {
+	temp := make([]*TreeNode, 0)
+	temp = append(temp, node)
+	stack.container = append(temp, stack.container...)
+}
+
+func (stack *Stack) pop() *TreeNode {
+	if len(stack.container) == 0 {
+		return nil
+	}
+	first := stack.container[0]
+	stack.container = stack.container[1:]
+	return first
+}
 
 var originMap = map[string]string{
 	"a":         "一（个）;每一（个）;任一（个）",
@@ -20,7 +46,7 @@ var originMap = map[string]string{
 	"advice":    "建议;劝告，忠告;（商业）通知;（政治，外交上的）报导，报告",
 	"advance":   "预付;提出;（使）前进;将…提前",
 	"bear":      "熊;（在证券市场等）卖空的人;蛮横的人",
-	"beautiful": "beautiful",
+	"beautiful": "美丽的",
 	"history":   "历史",
 	"available": "可获得的",
 	"break":     "突破;（嗓音）突变;破晓;（价格）突然下跌",
@@ -30,11 +56,98 @@ var originMap = map[string]string{
 
 type TreeNode struct {
 	label   string
-	sons    map[string]TreeNode
+	sons    map[string]*TreeNode
 	explain string
 }
 
+var word = flag.String("word", "", "需要查询的单词")
+
+var root = new(TreeNode)
+
 func main() {
-	fmt.Println(originMap["history"])
-	fmt.Println(originMap["histor1y"])
+	flag.Parse()
+	createTree(originMap)
+	explain, ok := query(*word)
+	if ok {
+		fmt.Println(explain)
+	} else {
+		fmt.Println("Not Found!!!")
+	}
+
+	ergodic()
+}
+
+func createTree(dic map[string]string) {
+	for word, value := range dic {
+		build(word, value)
+	}
+}
+
+func build(word string, explain string) {
+	node := foundOrCreate(word, root)
+	node.explain = originMap[word]
+}
+
+func foundOrCreate(str string, node *TreeNode) *TreeNode {
+	chars := []rune(str)
+
+	if len(chars) == 0 {
+		return node
+	}
+
+	first := string(chars[0])
+	left := string(chars[1:])
+	next := node.sons[first]
+	if next == nil {
+		next = new(TreeNode)
+		next.label = first
+		if node.sons == nil {
+			node.sons = make(map[string]*TreeNode)
+		}
+		node.sons[first] = next
+	}
+
+	return foundOrCreate(left, next)
+}
+
+func query(word string) (string, bool) {
+	result := find(word, root)
+	if len(result.explain) > 0 {
+		return result.explain, true
+	}
+	return "", false
+}
+
+func find(str string, node *TreeNode) *TreeNode {
+	chars := []rune(str)
+	if len(chars) == 0 {
+		return node
+	}
+	first := string(chars[0])
+	left := string(chars[1:])
+	next := node.sons[first]
+	if next != nil {
+		return find(left, next)
+	}
+	return nil
+}
+
+func ergodic() {
+	var stack = new(Stack)
+	stack.init()
+	stack.push(root)
+	for {
+		node := stack.pop()
+		if node == nil {
+			break
+		}
+		if len(node.explain) > 0 {
+			fmt.Printf("%s\n", node.explain)
+		}
+		if len(node.sons) > 0 {
+			for _, son := range node.sons {
+				stack.push(son)
+			}
+		}
+	}
 }
