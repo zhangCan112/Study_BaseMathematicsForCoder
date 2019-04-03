@@ -137,16 +137,19 @@ func ergodic() {
 	stack.init()
 	stack.push(root)
 	for {
-		node := *Stack(stack.pop())
-		if node == nil {
-			break
-		}
-		if len(node.explain) > 0 {
-			fmt.Printf("%s\n", node.explain)
-		}
-		if len(node.sons) > 0 {
-			for _, son := range node.sons {
-				stack.push(son)
+		if node, ok := (stack.pop()).(*TreeNode); ok {
+			if node == nil {
+				break
+			}
+			if len(node.explain) > 0 {
+				fmt.Printf("%s\n", node.explain)
+			}
+			if len(node.sons) > 0 {
+				for _, son := range node.sons {
+					stack.push(son)
+				}
+			} else {
+				break
 			}
 		}
 	}
