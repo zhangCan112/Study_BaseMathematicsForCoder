@@ -137,18 +137,13 @@ func (n *node) traverse(s *stack) {
 		fmt.Println(n.explain)
 	}
 
-	if len(n.sons) == 0 {
-		if next := s.pop(); next != nil {
-			next.traverse(s)
-		}
-	} else {
-		for i := 0; i < len(n.sons); i++ {
-			son := n.sons[i]
-			if i == (len(n.sons) - 1) {
-				son.traverse(s)
-			} else {
-				s.push(son)
-			}
-		}
+	for i := 0; i < len(n.sons); i++ {
+		son := n.sons[i]
+		s.push(son)
+	}
+
+	next := s.pop()
+	if next != nil {
+		next.traverse(s)
 	}
 }
